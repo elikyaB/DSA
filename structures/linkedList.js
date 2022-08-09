@@ -1,5 +1,3 @@
-// OOP
-
 class Node {
     constructor (data, next=null) {
         this.head = data
@@ -15,13 +13,27 @@ class LinkedList {
         this.length = 0
     }
 
-    append (data, next=null) {
+    append (data) {
+        if (data instanceof LinkedList) {
+            console.log(data.head)
+            this.length += data.length
+            // console.log(this)
+            this.tail.next = data.head
+            // console.log(this)
+            this.tail = data.tail
+            // console.log(this)
+            return this
+        }
+
         this.length++
         let newNode = new Node(data)
 
         if (this.tail) {
+            // console.log(this)
             this.tail.next = newNode
+            // console.log(this)
             this.tail = newNode
+            // console.log(this)
             return newNode
         }
 
@@ -109,59 +121,87 @@ class LinkedList {
         return false
     }
 
-    sortInts () {
+    sortInt () {
         let arr = []
         let currentNode = this.head
+
         const half = (range) => {return Math.floor(range/2)}
+
         const binarySort = (n, l=0, r=arr.length) => {
             let h = half(r-l)
             let p = l+h
-            // console.log(n, l, h, r, p)
             let pivot = arr[p]
             if (n==pivot || pivot==undefined) {return p}
             if (n<pivot) {return p>l ? binarySort(n, l, p) : l}
             if (n>pivot) {return r>p+1 ? binarySort(n, p, r) : r}
         }
+
         for (let e=0; e<this.length; e++) {
             arr.splice(binarySort(currentNode.head),0,currentNode.head)
             currentNode = currentNode.next
         }
 
-        for (item of arr) {sort}
+        currentNode = this.head
+        for (let i=0; i<arr.length; i++) {
+            currentNode.head = arr[i]
+            currentNode = currentNode.next
+        }
+
+        return this
     }
 
     reverse () {
         let firstNode = this.head
         let newTail = new Node(firstNode.head, null)
+        let newHead
 
         const loop = (node, previous=null) => {
-            let newHead = new Node(node.head, previous)
-            if (node.next != null) {return loop(node.next, newHead)}
+            newHead = new Node(node.head, previous)
+            if (node.next != null) {loop(node.next, newHead)}
             return newHead
         }
 
-        this.tail = newTail
         this.head = loop(firstNode)
+        console.log(newHead)
+        console.log(this.head)
+        this.tail = newTail
 
         return this
     }
 
     toArray () {
+        let arr = []
+        let currentNode = this.head
+        while (currentNode !== null) {
+            arr.push(currentNode.head)
+            currentNode = currentNode.next
+        }
+        return arr
+    }
 
+    fromArray (arr) {
+        for (let i=0; i<arr.length; i++) {this.append(arr[i])}
+        return this
     }
 
 }
 
-let node = new Node (12)
 let LL = new LinkedList()
-LL.append(55)
-LL.append(4)
-LL.append(16)
-LL.append(1)
-LL.append(10)
-LL.insert(1,22)
-LL.append(3)
-LL.append(-1)
-LL.append(39)
-LL.sortInts()
-console.log(LL.reverse())
+LL.append(8)
+LL.prepend(44)
+LL.insert(1,2)
+LL.sortInt()
+LL.reverse()
+LL.append(69)
+// LL = new LinkedList().fromArray(LL.toArray())
+// LL.pop()
+// LL.shift()
+console.log(LL, LL.toArray())
+
+// const test = [39, 55, 22, 4, 16, 1, 10, 3, -1]
+// const LL2 = new LinkedList().fromArray(test)
+// console.log(LL2, LL2.toArray())
+// LL.append(LL2)
+// console.log(LL, LL.toArray())
+
+
