@@ -1,44 +1,31 @@
 class Node {
     constructor (data, next=null) {
-        this.head = data
+        this.data = data
         this.next = next
         // this.prev = prev
     }
 }
 
 class LinkedList {
-    constructor () {
-        this.head = null
-        this.tail = null
-        this.length = 0
+    constructor (head=null, tail=null, length=0) {
+        this.head = head
+        this.tail = tail
+        this.length = length
     }
 
-    append (data) {
-        if (data instanceof LinkedList) {
-            console.log(data.head)
-            this.length += data.length
-            // console.log(this)
-            this.tail.next = data.head
-            // console.log(this)
-            this.tail = data.tail
-            // console.log(this)
-            return this
+    append (...data) {
+        for (let i=0; i<data.length; i++) {
+            this.length++
+            let newNode = new Node(data[i])
+
+            if (this.tail) {
+                this.tail.next = newNode
+                this.tail = newNode
+            } else {
+                this.head = this.tail = newNode
+            }
         }
-
-        this.length++
-        let newNode = new Node(data)
-
-        if (this.tail) {
-            // console.log(this)
-            this.tail.next = newNode
-            // console.log(this)
-            this.tail = newNode
-            // console.log(this)
-            return newNode
-        }
-
-        this.head = this.tail = newNode
-        return newNode
+        return this
     }
 
     prepend (data) {
@@ -115,7 +102,7 @@ class LinkedList {
     search (data) {
         let currentNode = this.head
         for (let i=0; i<this.length; i++) {
-            if (currentNode.head == data) {return i}
+            if (currentNode.data == data) {return i}
             currentNode = currentNode.next
         }
         return false
@@ -137,13 +124,13 @@ class LinkedList {
         }
 
         for (let e=0; e<this.length; e++) {
-            arr.splice(binarySort(currentNode.head),0,currentNode.head)
+            arr.splice(binarySort(currentNode.data),0,currentNode.data)
             currentNode = currentNode.next
         }
 
         currentNode = this.head
         for (let i=0; i<arr.length; i++) {
-            currentNode.head = arr[i]
+            currentNode.data = arr[i]
             currentNode = currentNode.next
         }
 
@@ -151,21 +138,14 @@ class LinkedList {
     }
 
     reverse () {
-        let firstNode = this.head
-        let newTail = new Node(firstNode.head, null)
-        let newHead
-
         const loop = (node, previous=null) => {
-            newHead = new Node(node.head, previous)
-            if (node.next != null) {loop(node.next, newHead)}
+            let newHead = new Node (node.data, previous)
+            if (!previous) {this.tail = newHead}
+            if (node.next != null) {return loop(node.next, newHead)}
             return newHead
         }
 
-        this.head = loop(firstNode)
-        console.log(newHead)
-        console.log(this.head)
-        this.tail = newTail
-
+        this.head = loop(this.head)
         return this
     }
 
@@ -173,14 +153,17 @@ class LinkedList {
         let arr = []
         let currentNode = this.head
         while (currentNode !== null) {
-            arr.push(currentNode.head)
+            arr.push(currentNode.data)
             currentNode = currentNode.next
         }
         return arr
     }
 
-    fromArray (arr) {
-        for (let i=0; i<arr.length; i++) {this.append(arr[i])}
+    join (linkList) {
+        let newTail = linkList.tail
+        this.tail.next = linkList.head
+        this.tail = newTail
+        this.length += linkList.length
         return this
     }
 
@@ -188,20 +171,31 @@ class LinkedList {
 
 let LL = new LinkedList()
 LL.append(8)
-LL.prepend(44)
-LL.insert(1,2)
-LL.sortInt()
-LL.reverse()
-LL.append(69)
-// LL = new LinkedList().fromArray(LL.toArray())
-// LL.pop()
-// LL.shift()
-console.log(LL, LL.toArray())
+console.log('// APPEND', '\n', LL, LL.toArray(), '\n')
 
-// const test = [39, 55, 22, 4, 16, 1, 10, 3, -1]
-// const LL2 = new LinkedList().fromArray(test)
-// console.log(LL2, LL2.toArray())
-// LL.append(LL2)
-// console.log(LL, LL.toArray())
+LL.append(69, 420, 350)
+console.log('// APPEND', '\n', LL, LL.toArray(), '\n')
+
+LL.prepend(44)
+console.log('// PREPEND', '\n', LL, LL.toArray(), '\n')
+
+LL.sortInt()
+console.log('// SORTINT', '\n', LL, LL.toArray(), '\n')
+
+LL.pop()
+console.log('// POP', '\n', LL, LL.toArray(), '\n')
+
+LL.reverse()
+console.log('// REVERSE', '\n', LL, LL.toArray(), '\n')
+
+LL.append(666)
+console.log('// APPEND', '\n', LL, LL.toArray(), '\n')
+
+
+const test = [39, 55, 22, 4, 16, 1, 10, 3, -1]
+const LL2 = new LinkedList().append(...test)
+console.log(LL2, LL2.toArray())
+
+console.log(LL.join(LL2), LL.toArray())
 
 
