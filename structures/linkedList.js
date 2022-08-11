@@ -28,9 +28,13 @@ class LinkedList {
         return this
     }
 
-    prepend (data) {
-        this.length++
-        this.head = new Node(data, this.head)
+    prepend (...data) {
+        // prepends in order so last element will be head node
+        for (let i=0; i<data.length; i++) {
+            this.length++
+            this.head = new Node(data[i], this.head)
+        }
+        return this
     }
 
     pop () {
@@ -60,24 +64,30 @@ class LinkedList {
         return headNode
     }
 
-    insert (x, data) {
+    insert (x, ...data) {
         if (x>0 && x<this.length) {
-            let newNode = new Node(data)
+            
             let previousNode = this.head
             let currentNode
+            let element = 0
             for (let i=1; i<this.length; i++) {
                 currentNode = previousNode.next
                 if (i==x) {
-                    this.length++
+                    let newNode = new Node(data[element])
                     newNode.next = currentNode
                     previousNode.next = newNode
-                    return newNode
+                    if (element != data.length-1) {
+                        element++
+                        
+                    }
                 }
                 previousNode = currentNode
             }
+            this.length += data.length
+            return this
         }
-        if (x >= this.length) {return this.append(data)}
-        if (x==0) {return this.prepend(data)}
+        if (x >= this.length) {return this.append(...data)}
+        if (x==0) {return this.prepend(...data)}
     }
 
     remove (x) {
@@ -198,4 +208,5 @@ console.log(LL2, LL2.toArray())
 
 console.log(LL.join(LL2), LL.toArray())
 
-
+LL.insert(1,1,2,3)
+console.log('// INSERT', '\n', LL, LL.toArray(), '\n')
