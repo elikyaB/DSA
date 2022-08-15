@@ -66,20 +66,22 @@ class LinkedList {
 
     insert (x, ...data) {
         if (x>0 && x<this.length) {
-            
             let previousNode = this.head
             let currentNode
-            let element = 0
             for (let i=1; i<this.length; i++) {
                 currentNode = previousNode.next
                 if (i==x) {
-                    let newNode = new Node(data[element])
-                    newNode.next = currentNode
-                    previousNode.next = newNode
-                    if (element != data.length-1) {
+                    const loop = (element=0) => {
+                        let newNode = new Node(data[element])
                         element++
-                        
+                        if (element < data.length) {
+                            newNode.next = loop(element)
+                        } else {
+                            newNode.next = currentNode
+                        }
+                        return newNode
                     }
+                    previousNode.next = loop()
                 }
                 previousNode = currentNode
             }
@@ -90,23 +92,41 @@ class LinkedList {
         if (x==0) {return this.prepend(...data)}
     }
 
-    remove (x) {
+    remove (x, n=1) {
         if (x >= this.length) {return undefined}
-        if (x == this.length-1) {return this.pop()}
+
+        let removed = []
+
+        const loop = (node, r) => {
+            if (r>0 && node != null) {
+                removed.push(node.data)
+                return loop(node.next, r-1)
+            }
+            else {
+                this.length -= n-r
+                return node
+            }
+        }
+
+        if (x == this.length-1) {removed.push(this.pop())}
+        if (x == 0) {this.head = loop(this.head, n)}
         if (x>0) {
             let previousNode = this.head
             let currentNode
             for (let i=1; i<this.length; i++) {
                 currentNode = previousNode.next
                 if (i==x) {
-                    this.length--
-                    previousNode.next = currentNode.next
-                    return currentNode
+                    if (i+n > this.length-1) {
+                        this.tail = previousNode
+                    }
+                    previousNode.next = loop(currentNode, n)
+                    break
                 }
                 previousNode = currentNode
             }
         }
-        if (x==0) {return this.shift()}
+        
+        return removed
     }
 
     search (data) {
@@ -163,7 +183,7 @@ class LinkedList {
         let arr = []
         let currentNode = this.head
         while (currentNode !== null) {
-            arr.push(currentNode.data)
+            arr.push(currentNode?.data)
             currentNode = currentNode.next
         }
         return arr
@@ -176,17 +196,14 @@ class LinkedList {
         this.length += linkList.length
         return this
     }
-
 }
 
 let LL = new LinkedList()
-LL.append(8)
-console.log('// APPEND', '\n', LL, LL.toArray(), '\n')
 
 LL.append(69, 420, 350)
 console.log('// APPEND', '\n', LL, LL.toArray(), '\n')
 
-LL.prepend(44)
+LL.prepend(44, 11, 88)
 console.log('// PREPEND', '\n', LL, LL.toArray(), '\n')
 
 LL.sortInt()
@@ -198,15 +215,14 @@ console.log('// POP', '\n', LL, LL.toArray(), '\n')
 LL.reverse()
 console.log('// REVERSE', '\n', LL, LL.toArray(), '\n')
 
-LL.append(666)
-console.log('// APPEND', '\n', LL, LL.toArray(), '\n')
-
-
 const test = [39, 55, 22, 4, 16, 1, 10, 3, -1]
 const LL2 = new LinkedList().append(...test)
-console.log(LL2, LL2.toArray())
+console.log('// NEW LIST', '\n', LL2, LL2.toArray())
 
-console.log(LL.join(LL2), LL.toArray())
+console.log('// JOIN', '\n', LL.join(LL2), LL.toArray())
 
-LL.insert(1,1,2,3)
+LL.insert(1, 1, 2, 3)
 console.log('// INSERT', '\n', LL, LL.toArray(), '\n')
+
+LL.remove(15, 3)
+console.log('// REMOVE', '\n', LL, LL.toArray(), '\n')
